@@ -38,6 +38,7 @@ async function run() {
     const serviceCollection = client.db("doctor_portal").collection("services");
     const bookingCollection = client.db("doctor_portal").collection("bookings");
     const userCollection = client.db("doctor_portal").collection("users");
+    const doctorCollection = client.db('doctor_portal').collection('doctors');
 
     app.get("/service", async (req, res) => {
       const query = {};
@@ -139,6 +140,13 @@ async function run() {
       } else {
         return res.status(403).send({ message: "Forbidded Access" });
       }
+    });
+
+    // add doctor in the database
+    app.post('/doctor', verifyJWT ,async (req, res) => {
+      const doctor = req.body;
+      const result = await doctorCollection.insertOne(doctor);
+      res.send(result);
     });
 
     app.post("/booking", async (req, res) => {
