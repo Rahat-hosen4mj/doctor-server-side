@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { query } = require("express");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
@@ -54,8 +55,9 @@ async function run() {
       res.send(users);
     });
 
-    // make admin
+    
 
+    // make admin
    app.put('/user/admin/:email', verifyJWT, async(req, res) =>{
     const  email = req.params.email;
     const requester = req.decoded.email;
@@ -142,12 +144,27 @@ async function run() {
       }
     });
 
+    // get all doctors
+    app.get('/doctor', async(req, res) =>{
+      const doctors = await doctorCollection.find().toArray();
+      res.send(doctors);
+    })
+
+
     // add doctor in the database
-    app.post('/doctor', verifyJWT ,async (req, res) => {
+    app.post('/doctor',async (req, res) => {
       const doctor = req.body;
       const result = await doctorCollection.insertOne(doctor);
       res.send(result);
     });
+
+    // delete doctor
+    app.delete('/doctor/:email', verifyJWT, async (req, res) =>{
+      const email = req.params.email;
+      const filter = {email: email}
+      const result = await doctorCollection.deleteOne(filter);
+      res.send(result)
+    })
 
     app.post("/booking", async (req, res) => {
       const booking = req.body;
