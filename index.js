@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { query } = require("express");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
@@ -138,6 +138,15 @@ async function run() {
      * app.delete('/booking/:id) //
      */
 
+    // get a specific booking collection [by id]
+    app.get('/booking/:id', verifyJWT, async(req, res) =>{
+      const id = req.params.id;
+      const filter = {_id: ObjectId(id)}
+      const booking = await bookingCollection.findOne(filter);
+      res.send(booking)
+    })
+    
+    // get all booking collection
     app.get("/booking", verifyJWT, async (req, res) => {
       const patient = req.query.patient || "mio@gmail.com";
       const decodedEmail = req.decoded.email;
@@ -149,6 +158,7 @@ async function run() {
         return res.status(403).send({ message: "Forbidded Access" });
       }
     });
+
 
     // // get all doctors
     app.get("/doctor", verifyJWT, verifyAdmin, async (req, res) => {
