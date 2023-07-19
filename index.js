@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { query } = require("express");
 require("dotenv").config();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Stripe = require('stripe');
+const stripe = Stripe('stripe')(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -57,6 +58,8 @@ async function run() {
       }
     };
 
+
+    // add a comment for testing purpose
     app.get("/service", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
@@ -138,7 +141,6 @@ async function run() {
           transactionId: payment.transactionId
         }
       }
-
       const result = await paymentCollection.insertOne(payment);
       const updatedBooking = await bookingCollection.updateOne(filter, updatedDoc);
       res.send(updatedBooking);
