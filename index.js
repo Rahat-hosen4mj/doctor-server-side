@@ -240,7 +240,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Doctor server side is running...!!");
+  res.send("Doctor server side is running...!");
 });
 
 app.listen(port, () => {
